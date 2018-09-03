@@ -3,6 +3,7 @@ package pkg
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -11,12 +12,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+type Logger interface {
+	Info(s string)
+	InfoF(s string, params ...interface{})
+	Debug(s string)
+	DebugF(s string, params ...interface{})
+}
+
 type Config struct {
 	applications []string
 	profiles     []string
 	baseDir      string
 	configs      map[string][]byte
 	priority     []string
+	debug        bool
+	logger       Logger
 }
 
 func NewConfig() *Config {
@@ -43,6 +53,16 @@ func (c *Config) WithBaseDir(baseDir string) *Config {
 	return c
 }
 
+func (c *Config) Debug(enabled bool) *Config {
+	c.debug = enabled
+	return c
+}
+
+func (c *Config) WithLogger(l Logger) *Config {
+	c.logger = l
+	return c
+}
+
 func (c *Config) Load(withFuncs ...WithFunc) error {
 
 	// TODO(ethanfrogers): rename this to something not dumb
@@ -62,10 +82,16 @@ func (c *Config) Load(withFuncs ...WithFunc) error {
 	}
 
 	for _, f := range files {
+		if c.debug {
+			c.logger.DebugF("evaluating %s.yml\n", f)
+		}
 		d, err := readFileIfExists(filepath.Join(c.baseDir, f+".yml"))
 		if err != nil {
 			// return err
 			// fmt.Println(err.Error())
+			if c.debug {
+				c.logger.Debug(err.Error())
+			}
 			continue
 		}
 		parsed, err := ParseAndEvaluateYAML(d, withFuncs...)
@@ -94,7 +120,7 @@ func (c *Config) Get(property string) interface{} {
 
 func readFileIfExists(pth string) ([]byte, error) {
 	if _, err := os.Stat(pth); os.IsNotExist(err) {
-		return nil, errors.New("config file not found")
+		return nil, errors.New(fmt.Sprintf("file %s not found.", pth))
 	}
 
 	d, err := ioutil.ReadFile(pth)
