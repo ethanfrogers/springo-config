@@ -25,6 +25,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  name = "github.com/imdario/mergo"
+  packages = ["."]
+  revision = "9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4"
+  version = "v0.3.6"
+
+[[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
   revision = "c2353362d570a7bfa228149c62842019201cfb71"
@@ -79,7 +85,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "fa5fdf94c78965f1aa8423f0cc50b8b8d728b05a"
+  revision = "2b024373dcd9800f0cae693839fac6ede8d64a8c"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -103,6 +109,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "def8a498d2e328361631e914fbdba5cbdbb27f108d08faf669787ecb0f866fa2"
+  inputs-digest = "4c99bbb9608fce79e78a50f7126845bf3489ade271ac542ca4aadfde6b93147c"
   solver-name = "gps-cdcl"
   solver-version = 1

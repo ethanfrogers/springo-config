@@ -80,12 +80,23 @@ mar:
   lar: test
 `
 
+var withContextBase = `
+foo:
+  bar: ${fizz.buzz}
+`
+
+var withContextResult = `
+foo:
+  bar: fizzbuzz
+`
+
 func TestParseAndEvaluateYAML(t *testing.T) {
 	cases := []struct {
 		test     string
 		expected string
 		withFunc []WithFunc
 		name     string
+		context  map[string]interface{}
 	}{
 		{
 			test:     baseCase,
@@ -123,10 +134,16 @@ func TestParseAndEvaluateYAML(t *testing.T) {
 			test:     recursiveBase,
 			expected: recursiveResult,
 		},
+		{
+			name:     "with context",
+			test:     withContextBase,
+			expected: withContextResult,
+			context:  map[string]interface{}{"fizz": map[string]string{"buzz": "fizzbuzz"}},
+		},
 	}
 
 	for _, c := range cases {
-		r, err := ParseAndEvaluateYAML([]byte(c.test), c.withFunc...)
+		r, err := ParseAndEvaluateYAML([]byte(c.test), c.context, c.withFunc...)
 		if err != nil {
 			t.Fatalf("case: %s, err: %s", c.name, err.Error())
 		}
