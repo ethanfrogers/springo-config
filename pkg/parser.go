@@ -65,7 +65,7 @@ func ParseAndEvaluateYAML(b []byte, withFuncs ...WithFunc) ([]byte, error) {
 	bufToString := buf.String()
 
 	if strings.Contains(bufToString, "${") {
-		return ParseAndEvaluateYAML([]byte(bufToString))
+		return ParseAndEvaluateYAML([]byte(bufToString), withFuncs...)
 	}
 
 	return []byte(buf.String()), nil
