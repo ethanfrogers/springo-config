@@ -9,6 +9,8 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/mitchellh/mapstructure"
+
 	"github.com/imdario/mergo"
 
 	"github.com/spf13/viper"
@@ -123,6 +125,7 @@ func (c *Config) Load(withFuncs ...WithFunc) error {
 		}
 
 	}
+
 	return nil
 }
 
@@ -139,6 +142,11 @@ func (c *Config) Get(property string) interface{} {
 		}
 	}
 	return target
+}
+
+func (c *Config) Unmarshal(property string, dest interface{}) error {
+	prop := c.Get(property)
+	return mapstructure.Decode(prop, dest)
 }
 
 func readFileIfExists(pth string) ([]byte, error) {
